@@ -1,0 +1,6 @@
+Version 0.1
+-----------
+ - Added initial functionality.
+	- Press Ctrl+Shift+K Ctrl+P to copy image of selected code to the clipboard.
+	- Works only for C# files.
+ - Added first pass at Lexer/Parser.

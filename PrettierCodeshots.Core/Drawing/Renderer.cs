@@ -12,7 +12,7 @@ namespace PrettierCodeshots.Core.Drawing
         {
 #pragma warning disable CA1416 // Validate platform compatibility
             var fontFamily = new FontFamily("Cascadia Mono");
-            var font = new Font(fontFamily, 18, FontStyle.Regular);
+            var font = new Font(fontFamily, 16, FontStyle.Regular);
             var solidBrush = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
             var path = $"{Path.GetTempPath()}\\{DateTime.Now.ToFileTimeUtc()}.png";
 
@@ -26,8 +26,11 @@ namespace PrettierCodeshots.Core.Drawing
             {
                 using (Graphics g = Graphics.FromImage(boundsBitmap))
                 {
-                    characterSize = g.MeasureString(" ", font);
-                    var size = g.MeasureString(text, font).ToSize();
+                    var characterAverageText = "The quick brown+fox-jumps/overthe=lazyDog1! "; // TODO(nki): Why doesn't measure string return consistent results?
+                    characterSize = g.MeasureString(characterAverageText, font);
+                    characterSize.Width /= characterAverageText.Length;
+                    var measureText = text.Replace(" ", " ");
+                    var size = g.MeasureString(measureText, font).ToSize();
                     width = size.Width + 40;
                     height = text.Split('\n').Length * (int) characterSize.Height + 20;
                 }
@@ -56,7 +59,7 @@ namespace PrettierCodeshots.Core.Drawing
                         if (token.Type == TokenType.Space)
                         {
                             if (i > 0 && string.IsNullOrWhiteSpace(tokens[i - 1].Value))
-                                point.X += characterSize.Width * 2;
+                                point.X += characterSize.Width;
                             else
                                 point.X += characterSize.Width;
                             continue;
@@ -99,7 +102,8 @@ namespace PrettierCodeshots.Core.Drawing
                         if (token.Value.Contains("\n"))
                             point.Y += measureString.Height;
                         else
-                            point.X += measureString.Width;
+                            point.X += token.Value.Length * characterSize.Width;
+                            //point.X += measureString.Width;
                     }
                 }
                 bitmap.Save(path, ImageFormat.Png);

@@ -18,7 +18,7 @@ namespace PrettierCodeshots.Core
                 { TokenType.Type, new List<string> { "enum", "class", "var", "string", "int", "float", "double", "String", "short" } },
                 { TokenType.Operator, new List<string> { "=", "-", "+",  "*", "/" } },
             };
-            _Text = text;
+            _Text = text.TrimEnd();
         }
 
         public List<Token> Parse()
@@ -28,7 +28,7 @@ namespace PrettierCodeshots.Core
 
             while (_Index < _Text.Length - 1)
             {
-                while (char.IsWhiteSpace(Peak()))
+                while (_Index != _Text.Length - 1 && char.IsWhiteSpace(Peak()))
                 {
                     if (Peak() == '\n')
                         tokens.Add(new Token(TokenType.NewLine, "\n", _Index, _Index + 1));
